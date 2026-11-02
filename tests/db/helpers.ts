@@ -75,7 +75,7 @@ export async function insertListing(
         categoryId,
         row.type,
         row.area,
-        (row.status as string | undefined) ?? 'pending',
+        (overrides.status as string | undefined) ?? 'pending',
       ],
     ),
   )
