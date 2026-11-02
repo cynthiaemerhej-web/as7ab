@@ -32,7 +32,7 @@ export default function AdForm({ ad }: { ad?: AdRow | null }) {
         return
       }
       setUploading(true)
-      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
+      const ext = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif' } as Record<string, string>)[file.type] ?? 'jpg'
       const path = `${crypto.randomUUID()}.${ext}`
       const { error } = await createBrowserClient().storage.from(AD_BANNERS_BUCKET).upload(path, file, { contentType: file.type })
       setUploading(false)

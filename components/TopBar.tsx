@@ -11,7 +11,7 @@ export default async function TopBar() {
       <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3">
         <Logo />
         <div className="hidden flex-1 md:block">
-          <SearchBar />
+          <SearchBar id="q-top" />
         </div>
         <div className="ml-auto flex items-center gap-2">
           <Link
@@ -48,7 +48,7 @@ export default async function TopBar() {
         </div>
       </div>
       <div className="mx-auto w-full max-w-6xl px-4 pb-3 md:hidden">
-        <SearchBar />
+        <SearchBar id="q-mobile" />
       </div>
     </header>
   )

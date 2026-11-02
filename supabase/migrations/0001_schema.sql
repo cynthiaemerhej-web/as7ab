@@ -2,6 +2,15 @@
 -- provided by the platform) and on the local test cluster (tests/db/shim.sql).
 create extension if not exists pgcrypto;
 
+-- The site operates on Lebanon time: "today" for ad scheduling is the Beirut calendar date.
+create or replace function public.beirut_today()
+returns date
+language sql
+stable
+as $$
+  select (now() at time zone 'Asia/Beirut')::date;
+$$;
+
 -- ---------------------------------------------------------------- profiles
 create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
@@ -56,17 +65,18 @@ create table public.categories (
 create table public.listings (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references public.profiles (id) on delete cascade,
-  slug text not null unique,
+  slug text not null unique check (slug ~ '^[a-z0-9-]+$'),
   title text not null check (char_length(title) between 3 and 80),
   description text not null check (char_length(description) between 20 and 2000),
   category_id int not null references public.categories (id),
   type text not null check (type in ('service', 'goods')),
-  area text not null check (char_length(area) between 2 and 40),
+  -- Keep this list identical to lib/areas.ts (a unit test checks it).
+  area text not null check (area in ('Beirut', 'Metn', 'Keserwan', 'Jbeil', 'Baabda', 'Aley', 'Chouf', 'Batroun', 'Koura', 'Zgharta', 'Bcharre', 'Tripoli', 'Minieh-Danniyeh', 'Akkar', 'Zahle', 'West Bekaa', 'Rachaya', 'Baalbek', 'Hermel', 'Saida', 'Jezzine', 'Sour', 'Nabatieh', 'Marjeyoun', 'Hasbaya', 'Bint Jbeil', 'All Lebanon / Online')),
   phone text,
   whatsapp text,
   email text,
   instagram text,
-  website text,
+  website text check (website is null or website ~* '^https?://'),
   status text not null default 'pending' check (status in ('pending', 'approved', 'rejected', 'hidden')),
   hidden_by_admin boolean not null default false,  -- set when an admin hides; members cannot unhide
   needs_review boolean not null default false,
@@ -104,8 +114,8 @@ create table public.ads (
   link_url text not null,
   image_path text not null,
   slot text not null check (slot in ('home_banner', 'sidebar', 'search_inline', 'listing_bottom')),
-  starts_at date not null default current_date,
-  ends_at date not null default current_date,
+  starts_at date not null default public.beirut_today(),
+  ends_at date not null default public.beirut_today(),
   is_active boolean not null default true,
   impressions int not null default 0,
   clicks int not null default 0,

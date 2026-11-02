@@ -24,3 +24,9 @@ test.each([
   ['//evil.com', '/dashboard'],
   ['/\\evil.com', '/dashboard'],
 ])('safeNextPath(%s) → %s', (raw, out) => expect(safeNextPath(raw)).toBe(out))
+
+test('signed-in user hitting /login keeps a safe next param', () => {
+  expect(decideRedirect('/login', { role: 'member' }, '/admin/ads')).toBe('/admin/ads')
+  expect(decideRedirect('/login', { role: 'member' }, 'https://evil.com')).toBe('/dashboard')
+  expect(decideRedirect('/login', null, '/admin/ads')).toBeNull()
+})

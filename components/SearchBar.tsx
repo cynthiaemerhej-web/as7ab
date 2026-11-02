@@ -1,14 +1,16 @@
 import { Search } from 'lucide-react'
 
-export default function SearchBar({ defaultValue = '', size = 'md', autoFocus = false }: { defaultValue?: string; size?: 'md' | 'lg'; autoFocus?: boolean }) {
+type Props = { defaultValue?: string; size?: 'md' | 'lg'; autoFocus?: boolean; id?: string }
+
+export default function SearchBar({ defaultValue = '', size = 'md', autoFocus = false, id = 'q' }: Props) {
   const h = size === 'lg' ? 'min-h-14 text-lg' : 'min-h-11 text-base'
   return (
     <form action="/search" role="search" className="flex w-full items-stretch gap-2">
-      <label htmlFor="q" className="sr-only">
+      <label htmlFor={id} className="sr-only">
         Search listings
       </label>
       <input
-        id="q"
+        id={id}
         name="q"
         type="search"
         defaultValue={defaultValue}

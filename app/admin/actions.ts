@@ -94,10 +94,16 @@ export async function saveAd(_prev: FormState, formData: FormData): Promise<Form
     is_active: parsed.data.isActive,
     ...(imagePath ? { image_path: imagePath } : {}),
   }
+  let previousImage: string | null = null
+  if (id && imagePath) {
+    const { data: prev } = await sb.from('ads').select('image_path').eq('id', id).maybeSingle()
+    previousImage = prev?.image_path ?? null
+  }
   const { error } = id
     ? await sb.from('ads').update(values).eq('id', id)
     : await sb.from('ads').insert({ ...values, image_path: imagePath as string, created_by: admin.id })
   if (error) return { error: 'Could not save the ad.' }
+  if (previousImage && previousImage !== imagePath) await sb.storage.from(AD_BANNERS_BUCKET).remove([previousImage])
   revalidateAll()
   return { ok: true, message: id ? 'Ad updated.' : 'Ad created.' }
 }

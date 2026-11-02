@@ -42,7 +42,10 @@ export default function PhotoUploader({ listingId, userId, initial }: Props) {
         paths.push(path)
       }
       const res = await attachPhotos(listingId, paths)
-      if (res.error) throw new Error(res.error)
+      if (res.error) {
+        await sb.storage.from(LISTING_PHOTOS_BUCKET).remove(paths) // don't leave orphan files behind
+        throw new Error(res.error)
+      }
       if (res.photos) setPhotos(res.photos)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong while uploading.')

@@ -15,7 +15,7 @@ export default defineConfig({
   reporter: process.env.CI ? 'github' : 'list',
   use: { baseURL, trace: 'retain-on-failure' },
   projects: [
-    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    { name: 'mobile', use: { ...devices['Pixel 7'], viewport: { width: 360, height: 780 } } }, // spec: usable at 360px
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
   ],
   webServer:

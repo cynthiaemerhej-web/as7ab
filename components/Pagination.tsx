@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export default function Pagination({ page, totalPages, makeHref }: { page: number; totalPages: number; makeHref: (page: number) => string }) {
   if (totalPages <= 1) return null
+  page = Math.min(Math.max(1, page), totalPages)
   const btn = 'inline-flex min-h-11 items-center gap-1 rounded-card border border-line bg-white px-4 font-medium text-ink hover:bg-surface'
   return (
     <nav aria-label="Pagination" className="mt-8 flex items-center justify-between gap-3">

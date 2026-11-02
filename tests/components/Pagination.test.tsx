@@ -16,3 +16,10 @@ test('no previous on first page, no next on last', () => {
   expect(screen.queryByRole('link', { name: /next/i })).toBeNull()
   expect(screen.getByRole('link', { name: /previous/i })).toBeInTheDocument()
 })
+
+test('out-of-range page is clamped to the last page', () => {
+  render(<Pagination page={5} totalPages={2} makeHref={(p) => `/s?page=${p}`} />)
+  expect(screen.getByText('Page 2 of 2')).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: /previous/i })).toHaveAttribute('href', '/s?page=1')
+  expect(screen.queryByRole('link', { name: /next/i })).toBeNull()
+})

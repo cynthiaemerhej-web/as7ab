@@ -238,7 +238,7 @@ describe('ads', () => {
       as(db, admin, (c) =>
         c.query<{ id: string }>(
           `insert into ads (advertiser_name, link_url, image_path, slot, starts_at, ends_at, is_active)
-           values ($1, 'https://adv.example', 'ads/x.png', 'sidebar', current_date + ($2)::int, current_date + ($3)::int, $4) returning id`,
+           values ($1, 'https://adv.example', 'ads/x.png', 'sidebar', beirut_today() + ($2)::int, beirut_today() + ($3)::int, $4) returning id`,
           [name, start, end, active],
         ),
       )
@@ -254,7 +254,7 @@ describe('ads', () => {
     expect((await as(db, admin, (c) => c.query('select id from ads'))).rowCount).toBeGreaterThanOrEqual(4)
     await expect(
       as(db, alice, (c) =>
-        c.query(`insert into ads (advertiser_name, link_url, image_path, slot, starts_at, ends_at, is_active) values ('x','https://x','p','sidebar',current_date,current_date,true)`),
+        c.query(`insert into ads (advertiser_name, link_url, image_path, slot, starts_at, ends_at, is_active) values ('x','https://x','p','sidebar',beirut_today(),beirut_today(),true)`),
       ),
     ).rejects.toThrow(/row-level security/)
   })
@@ -269,6 +269,44 @@ describe('ads', () => {
   })
 })
 
+describe('data quality checks', () => {
+  let carol: string
+  beforeAll(async () => {
+    carol = await createUser(db, { email: 'carol@x.com' })
+  })
+
+  test('beirut_today() is the calendar date in Asia/Beirut', async () => {
+    const r = await db.query(`select beirut_today() = (now() at time zone 'Asia/Beirut')::date as ok, beirut_today()::text as d`)
+    expect(r.rows[0].ok).toBe(true)
+    expect(r.rows[0].d).toMatch(/^\d{4}-\d{2}-\d{2}$/)
+  })
+
+  test('area must be a known district', async () => {
+    await expect(insertListing(db, carol, catId, { area: 'Mars' })).rejects.toThrow(/listings_area_check/)
+    await expect(insertListing(db, carol, catId, { area: 'All Lebanon / Online' })).resolves.toBeTruthy()
+  })
+
+  test('website must be http(s); slug must be url-safe', async () => {
+    const id = await insertListing(db, carol, catId)
+    await expect(as(db, carol, (c) => c.query(`update listings set website = 'javascript:alert(1)' where id = $1`, [id]))).rejects.toThrow(/listings_website_check/)
+    await as(db, carol, (c) => c.query(`update listings set website = 'https://example.com' where id = $1`, [id]))
+    await expect(
+      as(db, carol, (c) => c.query(`insert into listings (owner_id, slug, title, description, category_id, type, area) values ($1, 'Bad Slug!', 'Valid title', 'A perfectly valid description text here.', $2, 'goods', 'Beirut')`, [carol, catId])),
+    ).rejects.toThrow(/listings_slug_check/)
+  })
+
+  test('members cannot post into a hidden category', async () => {
+    const hid = (await db.query(`insert into categories (slug, name, is_active) values ('inactive-cat', 'Inactive', false) returning id`)).rows[0].id
+    await expect(insertListing(db, carol, hid)).rejects.toThrow(/CATEGORY_INACTIVE/)
+  })
+
+  test('anon ad requests always start as new', async () => {
+    await as(db, null, (c) => c.query(`insert into ad_requests (name, email, slot, message, status) values ('Spam', 's@x.com', 'sidebar', 'hi', 'closed')`))
+    const r = await db.query(`select status from ad_requests where name = 'Spam'`)
+    expect(r.rows[0].status).toBe('new')
+  })
+})
+
 describe('ad_requests', () => {
   test('anon can insert but not read; admin can read and update', async () => {
     await as(db, null, (c) =>
@@ -276,11 +314,11 @@ describe('ad_requests', () => {
     )
     expect((await as(db, null, (c) => c.query('select id from ad_requests'))).rowCount).toBe(0)
     expect((await as(db, alice, (c) => c.query('select id from ad_requests'))).rowCount).toBe(0)
-    const r = await as(db, admin, (c) => c.query('select id, status from ad_requests'))
+    const r = await as(db, admin, (c) => c.query(`select id, status from ad_requests where name = 'Ali'`))
     expect(r.rowCount).toBe(1)
     expect(r.rows[0].status).toBe('new')
     await as(db, admin, (c) => c.query(`update ad_requests set status = 'contacted' where id = $1`, [r.rows[0].id]))
-    expect((await db.query('select status from ad_requests')).rows[0].status).toBe('contacted')
+    expect((await db.query('select status from ad_requests where id = $1', [r.rows[0].id])).rows[0].status).toBe('contacted')
   })
 })
 

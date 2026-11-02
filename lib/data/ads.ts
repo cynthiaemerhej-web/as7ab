@@ -1,11 +1,11 @@
+import { after } from 'next/server'
 import type { AdBannerData } from '@/components/AdBanner'
 import type { AdSlot } from '@/lib/constants'
 import { pickAd } from '@/lib/ads/pick'
+import { beirutToday } from '@/lib/ads/status'
 import { AD_BANNERS_BUCKET, photoUrlFor, type Sb } from './photos'
 
-function today(): string {
-  return new Date().toISOString().slice(0, 10)
-}
+const today = beirutToday
 
 /** One active ad for the slot (random when several), recording an impression. */
 export async function getAdForSlot(sb: Sb, slot: AdSlot): Promise<AdBannerData | null> {
@@ -20,7 +20,10 @@ export async function getAdForSlot(sb: Sb, slot: AdSlot): Promise<AdBannerData |
   if (error || !data) return null
   const ad = pickAd(data)
   if (!ad) return null
-  void sb.rpc('record_ad_impression', { p_ad: ad.id }).then(() => undefined, () => undefined)
+  // Count after the response is sent, without being cut off by serverless freezes.
+  after(async () => {
+    await sb.rpc('record_ad_impression', { p_ad: ad.id })
+  })
   const urlFor = photoUrlFor(sb, AD_BANNERS_BUCKET)
   return { id: ad.id, imageUrl: urlFor(ad.image_path), linkUrl: ad.link_url, advertiserName: ad.advertiser_name }
 }

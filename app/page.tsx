@@ -24,7 +24,7 @@ export default async function Home() {
           Free to search, free to post. Cakes, tutors, plumbers, party supplies and more, offered by real people near you.
         </p>
         <div className="mx-auto mt-6 max-w-2xl">
-          <SearchBar size="lg" />
+          <SearchBar size="lg" id="q-hero" />
         </div>
       </section>
 

@@ -8,7 +8,7 @@ export default function NotFound() {
       <h1 className="mt-4 text-2xl font-bold">We couldn&apos;t find that page</h1>
       <p className="mt-2 text-muted">The listing may have been removed, or the link is wrong. Try a search instead.</p>
       <div className="mt-6">
-        <SearchBar />
+        <SearchBar id="q-404" />
       </div>
       <Link href="/" className="mt-4 text-sm font-semibold text-accent-dark hover:underline">
         Back to the home page

@@ -74,12 +74,18 @@ export async function updateListing(listingId: string, _prev: FormState, formDat
     })
     .eq('id', listingId)
     .eq('owner_id', profile.id)
-    .select('slug')
+    .select('slug, status')
     .maybeSingle()
   if (error || !data) return { error: 'We could not save your changes. Please try again.' }
   revalidatePath('/dashboard')
   revalidatePath(`/l/${data.slug}`)
-  return { ok: true, listingId, slug: data.slug, message: 'Saved. Live listings stay visible while an admin re-checks the edit.' }
+  const message =
+    data.status === 'approved' || data.status === 'hidden'
+      ? 'Saved. Your listing stays visible while an admin re-checks the edit.'
+      : data.status === 'rejected'
+        ? 'Saved. Press Resubmit on your listings page when you are ready for another review.'
+        : 'Saved. An admin will review it soon.'
+  return { ok: true, listingId, slug: data.slug, message }
 }
 
 export type PhotoItem = { id: string; url: string }

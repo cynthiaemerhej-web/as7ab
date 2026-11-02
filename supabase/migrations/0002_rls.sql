@@ -90,6 +90,9 @@ begin
     new.rejection_reason := null;
     new.views := 0;
     new.hidden_by_admin := false;
+    if not exists (select 1 from public.categories where id = new.category_id and is_active) then
+      raise exception 'CATEGORY_INACTIVE' using hint = 'Pick a category from the current list';
+    end if;
     -- Hidden listings don't count: members free a slot by hiding or deleting (spec §11).
     if (select count(*) from public.listings where owner_id = new.owner_id and status <> 'hidden') >= 10 then
       raise exception 'LISTING_LIMIT' using hint = 'A member may have at most 10 visible listings';
@@ -146,6 +149,11 @@ begin
     or new.email is distinct from old.email
     or new.instagram is distinct from old.instagram
     or new.website is distinct from old.website;
+
+  if new.category_id is distinct from old.category_id
+     and not exists (select 1 from public.categories where id = new.category_id and is_active) then
+    raise exception 'CATEGORY_INACTIVE' using hint = 'Pick a category from the current list';
+  end if;
 
   if content_changed and old.status in ('approved', 'hidden') then
     new.needs_review := true;
@@ -236,7 +244,7 @@ alter table public.ads enable row level security;
 
 create policy ads_select_live on public.ads
   for select using (
-    (is_active and starts_at <= current_date and ends_at >= current_date)
+    (is_active and starts_at <= public.beirut_today() and ends_at >= public.beirut_today())
     or public.is_admin()
   );
 
@@ -253,6 +261,20 @@ create policy ad_requests_insert_anyone on public.ad_requests
 create policy ad_requests_admin on public.ad_requests
   for all to authenticated
   using (public.is_admin()) with check (public.is_admin());
+
+-- Requests from the public always start as 'new' so none can hide from the queue.
+create or replace function public.enforce_ad_request_insert()
+returns trigger language plpgsql as $$
+begin
+  if not public.is_admin() then
+    new.status := 'new';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger ad_requests_enforce_insert before insert on public.ad_requests
+  for each row execute function public.enforce_ad_request_insert();
 
 -- ---------------------------------------------------------- site_settings
 alter table public.site_settings enable row level security;

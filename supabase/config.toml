@@ -1,5 +1,7 @@
 # Minimal Supabase CLI config so `npx supabase db push` can apply the
 # migrations in supabase/migrations to a linked project.
+# New Supabase projects run Postgres 17; the SQL here uses nothing newer than
+# Postgres 16, which is what scripts/db-test.sh runs locally.
 project_id = "as7ab"
 
 [db]

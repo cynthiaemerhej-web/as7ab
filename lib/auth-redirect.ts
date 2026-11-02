@@ -2,12 +2,12 @@
 
 export type RedirectUser = { role: string } | null
 
-export function decideRedirect(pathname: string, user: RedirectUser): string | null {
+export function decideRedirect(pathname: string, user: RedirectUser, nextParam?: string | null): string | null {
   const isDashboard = pathname === '/dashboard' || pathname.startsWith('/dashboard/')
   const isAdmin = pathname === '/admin' || pathname.startsWith('/admin/')
   if ((isDashboard || isAdmin) && !user) return `/login?next=${encodeURIComponent(pathname)}`
   if (isAdmin && user && user.role !== 'admin') return '/'
-  if (pathname === '/login' && user) return '/dashboard'
+  if (pathname === '/login' && user) return safeNextPath(nextParam)
   return null
 }
 

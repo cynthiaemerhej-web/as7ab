@@ -39,7 +39,7 @@ export default async function proxy(request: NextRequest) {
     role = 'member'
   }
 
-  const target = decideRedirect(pathname, user ? { role: role ?? 'member' } : null)
+  const target = decideRedirect(pathname, user ? { role: role ?? 'member' } : null, request.nextUrl.searchParams.get('next'))
   if (target) {
     const redirect = NextResponse.redirect(new URL(target, request.url))
     response.cookies.getAll().forEach((c) => redirect.cookies.set(c))

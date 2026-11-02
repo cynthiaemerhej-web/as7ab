@@ -171,6 +171,10 @@ Vercel to the new address, and redeploy.
   type are shown to the member. **Hide** takes a listing offline in a way
   the member cannot undo; **Reject** sends it back to them with your reason.
 - **Ads**: answer new requests; switch ads on/off; check views and clicks.
+- Glance at **Supabase → Storage** now and then: the free plan includes
+  1 GB. Photos are shrunk before upload (about 150–300 KB each), so that is
+  thousands of photos, but a member uploading nothing but huge files would
+  show up here.
 - Keep the site alive: the Supabase free plan **pauses a project after about
   a week without activity**. Normal visitors prevent this. If it ever shows
   "paused" in the Supabase dashboard, press **Restore**.

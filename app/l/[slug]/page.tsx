@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { after } from 'next/server'
 import { Eye, Flag, MapPin } from 'lucide-react'
 import AdSlot from '@/components/AdSlot'
 import Badge from '@/components/Badge'
@@ -30,7 +31,7 @@ export default async function ListingPage(props: PageProps<'/l/[slug]'>) {
   const sb = await createClient()
   const [listing, settings] = await Promise.all([getListingBySlug(sb, slug), getSettings(sb)])
   if (!listing) notFound()
-  if (listing.status === 'approved') void incrementViews(sb, listing.id)
+  if (listing.status === 'approved') after(() => incrementViews(sb, listing.id))
 
   const posted = new Date(listing.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
   const reportHref = `mailto:${settings.contact_email}?subject=${encodeURIComponent(`Report listing: ${listing.title} (${listing.slug})`)}`
