@@ -205,10 +205,13 @@ part).
 - `categories`: public read of active rows; admin write.
 - `listings`: public read where `status = 'approved'`; owner reads own rows
   in any status; owner inserts with `status='pending'` only and at most 10
-  listings; owner updates own rows but cannot change `status`,
-  `needs_review`, `rejection_reason`, `views`, or `owner_id` (enforced by a
-  trigger that resets those columns on member updates and sets
-  `needs_review = true` on an approved row); admins full access.
+  listings; owner updates own rows, with a trigger enforcing the only
+  status changes a member may make: `approved → hidden` and
+  `hidden → approved` (the dashboard Hide / Unhide buttons) and
+  `rejected → pending` (resubmit after fixing). Any other status value,
+  and any change to `needs_review`, `rejection_reason`, `views`, or
+  `owner_id`, is reverted by the trigger. Editing the content of an
+  `approved` row sets `needs_review = true`. Admins have full access.
 - `listing_photos`: public read for photos of approved listings; owner
   manages photos of own listings; admin full.
 - `ads`: public read of active rows within date range; admin write.
@@ -240,7 +243,8 @@ Four slots with fixed sizes so advertisers know what to supply:
 | listing_bottom | under contact buttons on a listing | 728×90 / 360×120 |
 
 Behaviour: if several ads are active for a slot, pick one at random per
-page render. If none, show an "Advertise here" placeholder linking to
+page render (pages with ad slots are rendered dynamically, not cached
+statically). If none, show an "Advertise here" placeholder linking to
 `/advertise`. Each render calls the impression RPC; the ad link goes
 through `/go/[adId]` which records a click then redirects. Banners carry a
 small "Ad" label.
@@ -280,7 +284,8 @@ set, otherwise newest first. No external search service in v1.
 - Member hits the 10-listing cap → form shows a message and a link to hide
   or delete old ones.
 - Listing rejected → member sees the reason in the dashboard and can edit
-  and resubmit (status returns to `pending`).
+  and resubmit, which sets status back to `pending` (allowed by the
+  trigger in §7).
 - Admin tries to demote themselves → blocked with message.
 - Deleted listing → photos removed from storage via a database webhook or
   a scheduled cleanup (v1: storage cleanup on delete done in the server
