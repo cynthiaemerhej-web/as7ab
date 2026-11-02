@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>As7ab mockups</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#D96C47;--primary-dark:#B8532F;--accent:#1F6F78;--accent-dark:#16555C;--surface:#FAF7F2;--card:#fff;--ink:#1E1E1E;--muted:#6B6560;--line:#E8E1D8;--wa:#25D366;--r:12px;--shadow:0 1px 2px rgba(30,30,30,.04),0 6px 20px rgba(30,30,30,.06)}
+*{box-sizing:border-box}
+body{margin:0;background:#e9e4dc;font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);padding:32px;display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start}
+.frame{background:var(--surface);overflow:hidden;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.18);border-radius:18px}
+.frame.mobile{width:390px;height:844px}
+.frame.desktop{width:1280px;height:800px}
+.frame.og{width:1200px;height:630px;border-radius:0}
+.frame h1,.frame h2,.frame h3,.frame p{margin:0}
+/* top bar */
+.top{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(250,247,242,.95)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:22px;letter-spacing:-.5px}
+.mark{width:32px;height:32px}
+.search{flex:1;display:flex;gap:8px}
+.input{flex:1;min-height:44px;border:1px solid var(--line);border-radius:var(--r);background:#fff;padding:0 14px;display:flex;align-items:center;color:var(--muted);font-size:15px}
+.input.lg{min-height:56px;font-size:17px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:var(--r);font-weight:600;font-size:15px;border:1px solid transparent;white-space:nowrap}
+.btn.primary{background:var(--primary);color:#fff}
+.btn.accent{background:var(--accent);color:#fff}
+.btn.wa{background:var(--wa);color:#fff}
+.btn.ghost{background:#fff;border-color:var(--line);color:var(--ink)}
+.btn.sm{min-height:36px;padding:0 12px;font-size:13px}
+.wrap{padding:16px}
+.desktop .wrap{max-width:1152px;margin:0 auto;padding:16px 24px}
+.hero{text-align:center;padding:24px 8px 8px}
+.hero h1{font-size:30px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
+.desktop .hero h1{font-size:40px}
+.hero p{color:var(--muted);margin-top:10px;font-size:15px}
+.ad{border:2px dashed var(--line);border-radius:var(--r);background:rgba(255,255,255,.6);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:13px;gap:2px}
+.ad b{font-size:14px}
+.ad.filled{border:none;background:linear-gradient(120deg,#1F6F78,#2b8a94);color:#fff;position:relative}
+.ad.filled .tag{position:absolute;top:6px;right:6px;background:rgba(30,30,30,.7);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:.5px}
+.section-title{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 10px}
+.section-title h2{font-size:20px;font-weight:700}
+.section-title a{color:var(--accent-dark);font-weight:600;font-size:14px;text-decoration:none}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.desktop .cats{grid-template-columns:repeat(5,1fr);gap:12px}
+.cat{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);outline:1px solid rgba(232,225,216,.6);padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;font-weight:600;text-align:center;min-height:92px;justify-content:center}
+.cat .ic{width:40px;height:40px;border-radius:999px;background:rgba(31,111,120,.1);display:flex;align-items:center;justify-content:center;color:var(--accent-dark);font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.desktop .grid{grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);outline:1px solid rgba(232,225,216,.6);overflow:hidden;display:flex;flex-direction:column}
+.ph{aspect-ratio:1/1;position:relative;background:linear-gradient(135deg,#f3e3d8,#e7d3c4)}
+.ph.b{background:linear-gradient(135deg,#d7e8e9,#bcd6d8)}
+.ph.c{background:linear-gradient(135deg,#f7e8c9,#efd6a0)}
+.ph.d{background:linear-gradient(135deg,#e4e0f3,#cfc8ea)}
+.badge{position:absolute;top:8px;left:8px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.92)}
+.badge.goods{color:var(--primary-dark)}
+.badge.service{color:var(--accent-dark)}
+.pill{display:inline-flex;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+.pill.goods{background:rgba(217,108,71,.1);color:var(--primary-dark)}
+.pill.service{background:rgba(31,111,120,.1);color:var(--accent-dark)}
+.pill.neutral{background:rgba(30,30,30,.05);color:var(--muted)}
+.pill.live{background:#d1fae5;color:#065f46}
+.pill.pending{background:#fef3c7;color:#92400e}
+.pill.rejected{background:#ffe4e6;color:#9f1239}
+.card .body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px}
+.card .c{font-size:12px;color:var(--accent-dark);font-weight:600}
+.card .t{font-size:15px;font-weight:600;line-height:1.3}
+.card .a{font-size:12px;color:var(--muted);margin-top:auto}
+.two{display:grid;grid-template-columns:1fr 300px;gap:32px}
+.side{display:flex;flex-direction:column;gap:16px}
+.promo{background:var(--accent);color:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.promo h2{font-size:18px;font-weight:700}.promo p{font-size:14px;opacity:.85;margin-top:4px}
+.promo .btn{background:#fff;color:var(--accent-dark);margin-top:14px}
+.crumb{font-size:13px;color:var(--muted)}
+.gallery{aspect-ratio:4/3;border-radius:var(--r);background:linear-gradient(135deg,#f3e3d8,#e7d3c4);outline:1px solid rgba(232,225,216,.6)}
+.thumbs{display:flex;gap:8px;margin-top:8px}
+.thumbs div{width:64px;height:64px;border-radius:8px;background:#e7d3c4}
+.thumbs div:first-child{outline:2px solid var(--primary)}
+.panel{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);outline:1px solid rgba(232,225,216,.6);padding:18px}
+.panel h1{font-size:24px;font-weight:700;line-height:1.2;margin-top:10px}
+.meta{font-size:13px;color:var(--muted);margin-top:6px}
+.contacts{display:grid;grid-template-columns:1fr;gap:8px;margin-top:14px}
+.desktop .contacts{grid-template-columns:1fr 1fr}
+.row{display:flex;gap:12px;align-items:center}
+.list{display:flex;flex-direction:column;gap:12px}
+.item{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);outline:1px solid rgba(232,225,216,.6);padding:12px;display:flex;gap:12px;align-items:center}
+.item .thumb{width:72px;height:72px;border-radius:8px;flex:none;background:linear-gradient(135deg,#d7e8e9,#bcd6d8)}
+.item .thumb.a{background:linear-gradient(135deg,#f3e3d8,#e7d3c4)}
+.item .thumb.c{background:linear-gradient(135deg,#f7e8c9,#efd6a0)}
+.item .t{font-weight:600;font-size:15px}
+.item .m{font-size:12px;color:var(--muted);margin-top:4px}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:6px}
+.tabs span{padding:12px 12px;font-size:14px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent}
+.tabs span.on{color:var(--primary-dark);border-color:var(--primary)}
+.tabs .n{background:var(--primary);color:#fff;border-radius:999px;font-size:11px;padding:1px 7px;margin-left:6px}
+.mod{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);outline:1px solid rgba(232,225,216,.6);padding:16px}
+.mod .head{display:flex;gap:16px}
+.mod .thumb{width:112px;height:112px;border-radius:8px;flex:none}
+.mod .desc{font-size:14px;color:rgba(30,30,30,.9);margin-top:8px;line-height:1.5}
+.mod .foot{display:flex;gap:8px;border-top:1px solid var(--line);margin-top:14px;padding-top:12px;flex-wrap:wrap}
+.btn.ok{background:#059669;color:#fff}.btn.rej{background:#fff;border-color:#fecdd3;color:#be123c}
+.foot-bar{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:12px 16px;font-size:12px;color:var(--muted)}
+/* OG */
+.og{display:flex;flex-direction:column;justify-content:center;padding:70px 80px;background:var(--surface);position:relative}
+.og .logo{font-size:56px}.og .mark{width:76px;height:76px}
+.og h1{font-size:50px;font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-top:28px;max-width:600px}
+.og p{font-size:24px;color:var(--muted);margin-top:18px;max-width:560px}
+.og .cards{position:absolute;right:-20px;bottom:-150px;display:flex;gap:20px;transform:rotate(-8deg)}
+.og .card{width:180px}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute"><defs><g id="mark"><circle cx="15" cy="20" r="12" fill="#D96C47"/><circle cx="25" cy="20" r="12" fill="#1F6F78" fill-opacity=".9"/><circle cx="20" cy="20" r="4.5" fill="#FAF7F2"/></g></defs></svg>
+
+<!-- HOME MOBILE -->
+<section class="frame mobile" data-screen="home-mobile">
+  <div class="top"><div class="logo"><svg class="mark" viewBox="0 0 40 40"><use href="#mark"/></svg>As7ab</div><span style="margin-left:auto" class="btn primary sm">+ Post</span><span class="btn ghost sm">Sign in</span></div>
+  <div style="padding:0 16px 12px;border-bottom:1px solid var(--line);background:rgba(250,247,242,.95)"><div class="search"><div class="input">Search for cakes, tutors, plumbers…</div><span class="btn primary">🔍</span></div></div>
+  <div class="wrap">
+    <div class="hero"><h1>Find services and goods from people you know, across Lebanon.</h1><p>Free to search, free to post. Offered by real people near you.</p></div>
+    <div class="ad" style="height:120px;margin-top:16px"><b>Advertise here</b>Reach people across Lebanon</div>
+    <div class="section-title"><h2>Browse by category</h2></div>
+    <div class="cats">
+      <div class="cat"><span class="ic">🎉</span>Parties &amp; Events</div><div class="cat"><span class="ic">🍽️</span>Food &amp; Catering</div><div class="cat"><span class="ic">🎓</span>Education</div>
+      <div class="cat"><span class="ic">✨</span>Health &amp; Beauty</div><div class="cat"><span class="ic">🔧</span>Home &amp; Repairs</div><div class="cat"><span class="ic">👶</span>Kids &amp; Baby</div>
+    </div>
+    <div class="section-title"><h2>Latest listings</h2><a>See all →</a></div>
+    <div class="grid">
+      <div class="card"><div class="ph"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Parties &amp; Events</span><span class="t">Birthday party supplies &amp; balloons</span><span class="a">📍 Metn</span></div></div>
+      <div class="card"><div class="ph b"><span class="badge service">Service</span></div><div class="body"><span class="c">Education &amp; Tutoring</span><span class="t">Math &amp; physics tutoring, Brevet to Bac</span><span class="a">📍 Beirut</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- LISTING MOBILE -->
+<section class="frame mobile" data-screen="listing-mobile">
+  <div class="top"><div class="logo"><svg class="mark" viewBox="0 0 40 40"><use href="#mark"/></svg>As7ab</div><span style="margin-left:auto" class="btn primary sm">+ Post</span><span class="btn ghost sm">👤</span></div>
+  <div class="wrap">
+    <div class="crumb">Listings / Parties &amp; Events</div>
+    <div class="gallery" style="margin-top:12px"></div>
+    <div class="thumbs"><div></div><div></div><div></div><div></div></div>
+    <div class="panel" style="margin-top:16px">
+      <div class="row" style="gap:6px"><span class="pill goods">Goods</span><span class="pill neutral">📍 Metn</span></div>
+      <h1>Birthday party supplies &amp; balloons</h1>
+      <p class="meta">Posted by <b style="color:var(--ink)">Mia K.</b> · 28 Oct 2026</p>
+      <p class="meta" style="font-size:12px">👁 142 views</p>
+      <p style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:16px">Get in touch</p>
+      <div class="contacts">
+        <span class="btn primary">📞 Call <span style="font-weight:400;opacity:.9">+961 3 123 456</span></span>
+        <span class="btn wa">💬 WhatsApp</span>
+        <span class="btn ghost">@ Instagram <span style="font-weight:400;opacity:.8">@mia.party</span></span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px">⚑ Report this listing</p>
+  </div>
+</section>
+
+<!-- DASHBOARD MOBILE -->
+<section class="frame mobile" data-screen="dashboard-mobile">
+  <div class="top"><div class="logo"><svg class="mark" viewBox="0 0 40 40"><use href="#mark"/></svg>As7ab</div><span style="margin-left:auto" class="btn primary sm">+ Post</span><span class="btn ghost sm">Mia ▾</span></div>
+  <div class="wrap">
+    <h1 style="font-size:24px;font-weight:700">My listings</h1>
+    <p class="meta">Hi Mia. 3 of 10 listings used.</p>
+    <div class="list" style="margin-top:16px">
+      <div class="item"><div class="thumb a"></div><div style="flex:1;min-width:0"><div class="row" style="gap:8px"><span class="t">Birthday party supplies</span><span class="pill live">Live</span></div><p class="m">👁 142 views · updated 28/10/2026</p><div class="actions"><span class="btn ghost sm">View</span><span class="btn ghost sm">✎ Edit</span><span class="btn ghost sm">Hide</span><span class="btn ghost sm" style="color:#be123c">Delete</span></div></div></div>
+      <div class="item"><div class="thumb c"></div><div style="flex:1;min-width:0"><div class="row" style="gap:8px"><span class="t">Custom cakes &amp; cupcakes</span><span class="pill pending">Pending review</span></div><p class="m">👁 0 views · updated 02/11/2026</p><div class="actions"><span class="btn ghost sm">View</span><span class="btn ghost sm">✎ Edit</span><span class="btn ghost sm" style="color:#be123c">Delete</span></div></div></div>
+      <div class="item"><div class="thumb"></div><div style="flex:1;min-width:0"><div class="row" style="gap:8px"><span class="t">Face painting for kids</span><span class="pill rejected">Rejected</span></div><p class="m" style="color:#9f1239">Reason: Please add a phone number or WhatsApp</p><div class="actions"><span class="btn ghost sm">✎ Edit</span><span class="btn ghost sm" style="border-color:var(--accent);color:var(--accent-dark)">Resubmit</span><span class="btn ghost sm" style="color:#be123c">Delete</span></div></div></div>
+    </div>
+    <div class="panel" style="margin-top:20px;border-left:4px solid var(--accent)"><b style="font-size:14px">Tip</b><p class="meta" style="margin-top:4px">Listings with photos get around three times more contacts. Add up to 6.</p></div>
+  </div>
+</section>
+
+<!-- HOME DESKTOP -->
+<section class="frame desktop" data-screen="home-desktop">
+  <div class="top" style="padding:12px 64px"><div class="logo"><svg class="mark" viewBox="0 0 40 40"><use href="#mark"/></svg>As7ab</div><div class="search" style="max-width:560px;margin:0 24px"><div class="input">Search for cakes, tutors, plumbers, balloons…</div><span class="btn primary">🔍 Search</span></div><span style="margin-left:auto" class="btn primary">+ Post a listing</span><span class="btn ghost">Sign in</span></div>
+  <div class="wrap">
+    <div class="hero" style="padding-top:28px"><h1 style="max-width:720px;margin:0 auto">Find services and goods from people you know, across Lebanon.</h1><p>Free to search, free to post. Cakes, tutors, plumbers, party supplies and more, offered by real people near you.</p></div>
+    <div class="ad filled" style="height:120px;margin-top:20px"><span class="tag">AD</span><b style="font-size:22px">Bake &amp; Take · Eid cakes, order by Friday</b></div>
+    <div class="two" style="margin-top:8px">
+      <div>
+        <div class="section-title"><h2>Browse by category</h2></div>
+        <div class="cats">
+          <div class="cat"><span class="ic">🎉</span>Parties &amp; Events</div><div class="cat"><span class="ic">🍽️</span>Food &amp; Catering</div><div class="cat"><span class="ic">🎓</span>Education &amp; Tutoring</div><div class="cat"><span class="ic">✨</span>Health &amp; Beauty</div><div class="cat"><span class="ic">🔧</span>Home &amp; Repairs</div>
+        </div>
+        <div class="section-title"><h2>Latest listings</h2><a>See all →</a></div>
+        <div class="grid">
+          <div class="card"><div class="ph"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Parties &amp; Events</span><span class="t">Birthday party supplies &amp; balloons</span><span class="a">📍 Metn</span></div></div>
+          <div class="card"><div class="ph b"><span class="badge service">Service</span></div><div class="body"><span class="c">Education &amp; Tutoring</span><span class="t">Math &amp; physics tutoring</span><span class="a">📍 Beirut</span></div></div>
+          <div class="card"><div class="ph c"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Food &amp; Catering</span><span class="t">Custom cakes &amp; cupcakes</span><span class="a">📍 Keserwan</span></div></div>
+          <div class="card"><div class="ph d"><span class="badge service">Service</span></div><div class="body"><span class="c">Home &amp; Repairs</span><span class="t">Plumbing &amp; water heater repair</span><span class="a">📍 Baabda</span></div></div>
+        </div>
+      </div>
+      <div class="side" style="margin-top:44px">
+        <div class="ad" style="height:250px"><b>Advertise here</b>Reach people across Lebanon</div>
+        <div class="promo"><h2>Offer something?</h2><p>Post your service or goods for free. It takes a few minutes from your phone.</p><span class="btn">Post a listing</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH DESKTOP -->
+<section class="frame desktop" data-screen="search-desktop">
+  <div class="top" style="padding:12px 64px"><div class="logo"><svg class="mark" viewBox="0 0 40 40"><use href="#mark"/></svg>As7ab</div><div class="search" style="max-width:560px;margin:0 24px"><div class="input" style="color:var(--ink)">cake</div><span class="btn primary">🔍 Search</span></div><span style="margin-left:auto" class="btn primary">+ Post a listing</span><span class="btn ghost">Mia ▾</span></div>
+  <div class="wrap">
+    <h1 style="font-size:26px;font-weight:700;margin-top:8px">Results for “cake”</h1>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px"><div class="input" style="color:var(--ink)">All categories ▾</div><div class="input" style="color:var(--ink)">Goods ▾</div><div class="input" style="color:var(--ink)">All of Lebanon ▾</div><span class="btn ghost">Apply filters</span></div>
+    <p class="meta" style="margin-top:12px">9 listings for <b style="color:var(--ink)">“cake”</b></p>
+    <div class="grid" style="margin-top:12px">
+      <div class="card"><div class="ph c"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Food &amp; Catering</span><span class="t">Chocolate cake orders, delivery in Metn</span><span class="a">📍 Metn</span></div></div>
+      <div class="card"><div class="ph"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Food &amp; Catering</span><span class="t">Custom cakes &amp; cupcakes</span><span class="a">📍 Keserwan</span></div></div>
+      <div class="card"><div class="ph b"><span class="badge service">Service</span></div><div class="body"><span class="c">Parties &amp; Events</span><span class="t">Party planner · we also bake the cake</span><span class="a">📍 Beirut</span></div></div>
+      <div class="card"><div class="ph d"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Handmade &amp; Gifts</span><span class="t">Cake toppers &amp; personalised candles</span><span class="a">📍 Jbeil</span></div></div>
+      <div class="card"><div class="ph"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Food &amp; Catering</span><span class="t">Vegan &amp; gluten‑free cakes</span><span class="a">📍 Beirut</span></div></div>
+      <div class="card"><div class="ph c"><span class="badge service">Service</span></div><div class="body"><span class="c">Education &amp; Tutoring</span><span class="t">Cake decorating classes for teens</span><span class="a">📍 Saida</span></div></div>
+      <div class="card"><div class="ph b"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Food &amp; Catering</span><span class="t">Wedding cakes &amp; dessert tables</span><span class="a">📍 All Lebanon / Online</span></div></div>
+      <div class="card"><div class="ph d"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Food &amp; Catering</span><span class="t">Traditional maamoul &amp; cakes</span><span class="a">📍 Zahle</span></div></div>
+    </div>
+    <div class="grid" style="margin-top:16px"><div class="ad" style="aspect-ratio:1/1"><b>Advertise here</b>Reach people across Lebanon</div></div>
+  </div>
+</section>
+
+<!-- ADMIN QUEUE DESKTOP -->
+<section class="frame desktop" data-screen="admin-queue-desktop">
+  <div class="top" style="padding:12px 64px"><div class="logo"><svg class="mark" viewBox="0 0 40 40"><use href="#mark"/></svg>As7ab</div><div class="search" style="max-width:560px;margin:0 24px"><div class="input">Search for cakes, tutors, plumbers, balloons…</div><span class="btn primary">🔍 Search</span></div><span style="margin-left:auto" class="btn primary">+ Post a listing</span><span class="btn ghost">Cynthia ▾</span></div>
+  <div class="wrap">
+    <div class="row" style="justify-content:space-between"><h1 style="font-size:26px;font-weight:700">Back office</h1><span class="meta">Admins only</span></div>
+    <div class="tabs"><span class="on">Queue <span class="n">2</span></span><span>Listings</span><span>Ads</span><span>Categories</span><span>Admins</span><span>Settings</span></div>
+    <h2 style="font-size:18px;font-weight:700;margin-top:22px">Waiting for approval <span style="color:var(--muted)">(2)</span></h2>
+    <div class="list" style="margin-top:12px">
+      <div class="mod"><div class="head"><div class="thumb" style="background:linear-gradient(135deg,#f7e8c9,#efd6a0)"></div><div style="flex:1"><div class="row" style="gap:8px"><b style="font-size:16px">Custom cakes &amp; cupcakes</b><span class="pill pending">Pending review</span><span class="pill goods">Goods</span></div><p class="meta" style="margin-top:4px">Food &amp; Catering · Keserwan · by Mia K. · 02/11/2026</p><p class="desc">Home‑made cakes for birthdays and weddings. Chocolate, vanilla, red velvet and lotus. Order 3 days ahead, delivery in Keserwan and Metn.</p><div class="row" style="gap:8px;margin-top:10px"><span class="btn primary sm">📞 Call +961 3 123 456</span><span class="btn wa sm">💬 WhatsApp</span><span class="btn ghost sm">@ Instagram</span></div></div></div>
+        <div class="foot"><span class="btn ghost sm">Preview</span><span class="btn ok sm">Approve</span><span class="btn rej sm">Reject…</span><span class="btn ghost sm" style="color:var(--muted)">Hide</span></div></div>
+      <div class="mod"><div class="head"><div class="thumb" style="background:#f1ece4;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px">No photo</div><div style="flex:1"><div class="row" style="gap:8px"><b style="font-size:16px">AC cleaning &amp; maintenance</b><span class="pill pending">Pending review</span><span class="pill service">Service</span></div><p class="meta" style="margin-top:4px">Home &amp; Repairs · Baabda · by Ali H. · 02/11/2026</p><p class="desc">Split and central AC cleaning, gas refill and repairs. Same‑week visits in Baabda, Hadath and Hazmieh.</p><div class="row" style="gap:8px;margin-top:10px"><span class="btn wa sm">💬 WhatsApp</span></div></div></div>
+        <div class="foot"><span class="btn ghost sm">Preview</span><span class="btn ok sm">Approve</span><span class="btn rej sm">Reject…</span><span class="btn ghost sm" style="color:var(--muted)">Hide</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- OG IMAGE -->
+<section class="frame og" data-screen="og">
+  <div class="og" style="height:100%">
+    <div class="logo"><svg class="mark" viewBox="0 0 40 40"><use href="#mark"/></svg>As7ab</div>
+    <h1>Find services and goods from people you know, across Lebanon.</h1>
+    <p>Free to search. Free to post. Real people near you.</p>
+    <div class="cards">
+      <div class="card"><div class="ph"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Parties &amp; Events</span><span class="t">Birthday supplies</span><span class="a">📍 Metn</span></div></div>
+      <div class="card"><div class="ph b"><span class="badge service">Service</span></div><div class="body"><span class="c">Education</span><span class="t">Math tutoring</span><span class="a">📍 Beirut</span></div></div>
+      <div class="card"><div class="ph c"><span class="badge goods">Goods</span></div><div class="body"><span class="c">Food &amp; Catering</span><span class="t">Custom cakes</span><span class="a">📍 Keserwan</span></div></div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

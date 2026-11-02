@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   title: { default: `${SITE_NAME} — ${SITE_TAGLINE}`, template: `%s · ${SITE_NAME}` },
   description: SITE_TAGLINE,
   icons: { icon: "/favicon.svg" },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  openGraph: { title: SITE_NAME, description: SITE_TAGLINE, images: [{ url: "/og.png", width: 1200, height: 630 }] },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
