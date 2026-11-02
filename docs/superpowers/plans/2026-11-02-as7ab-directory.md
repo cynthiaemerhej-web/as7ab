@@ -1,8 +1,8 @@
-# Jiran Directory Implementation Plan
+# As7ab Directory Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build Jiran, a free English-language directory for Lebanon where members post services/goods listings with photos and contact details, admins moderate, and four paid ad slots are managed from an admin area.
+**Goal:** Build As7ab, a free English-language directory for Lebanon where members post services/goods listings with photos and contact details, admins moderate, and four paid ad slots are managed from an admin area.
 
 **Architecture:** Next.js App Router front end deployed on Vercel talks to Supabase (Postgres + Auth + Storage) through `@supabase/ssr` clients. All authorisation lives in Postgres Row Level Security and triggers; the Next.js layer only renders and calls server actions. A thin `lib/data` layer wraps every query so pages stay declarative.
 
@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - Node 22, Next.js `16.x`, React 19, Tailwind `4.x`, zod `4.x`, `@supabase/ssr` `0.12.x`, `@supabase/supabase-js` `2.x`. Pin exact versions in `package.json` at scaffold time.
-- Site name everywhere: **Jiran**. Tagline: "Find services and goods from people near you, across Lebanon."
+- Site name everywhere: **As7ab** (capital A, digit seven, lowercase "ab"). Default tagline: "Find services and goods from people you know, across Lebanon." Tagline and other site text are editable in `/admin/settings`.
 - English only. No Arabic/French UI strings in v1.
 - Palette (spec §10): primary `#D96C47`, accent `#1F6F78`, background `#FAF7F2`, text `#1E1E1E`. Font: Plus Jakarta Sans via `next/font/google`, system fallback. Corner radius 12 px.
 - Every page usable at 360 px width; contact buttons ≥ 44 px tall.
@@ -39,7 +39,7 @@
 ## File structure
 
 ```
-jiran/
+as7ab/
   package.json, tsconfig.json, next.config.ts, postcss.config.mjs
   vitest.config.ts, playwright.config.ts, .env.example, .gitignore
   proxy.ts                           # session refresh + route protection
@@ -84,13 +84,13 @@ jiran/
 - Test: `tests/unit/constants.test.ts`
 
 **Interfaces:**
-- Produces: `lib/constants.ts` exporting `SITE_NAME = 'Jiran'`, `SITE_TAGLINE`, `LISTING_TYPES = ['service','goods'] as const`, `AD_SLOTS = ['home_banner','sidebar','search_inline','listing_bottom'] as const`, `LISTING_STATUSES = ['pending','approved','rejected','hidden'] as const`, `MAX_PHOTOS = 6`, `MAX_LISTINGS_PER_MEMBER = 10`, `RESULTS_PER_PAGE = 24`, `INLINE_AD_EVERY = 8`, and types `ListingType`, `AdSlot`, `ListingStatus`.
+- Produces: `lib/constants.ts` exporting `SITE_NAME = 'As7ab'`, `SITE_TAGLINE`, `LISTING_TYPES = ['service','goods'] as const`, `AD_SLOTS = ['home_banner','sidebar','search_inline','listing_bottom'] as const`, `LISTING_STATUSES = ['pending','approved','rejected','hidden'] as const`, `MAX_PHOTOS = 6`, `MAX_LISTINGS_PER_MEMBER = 10`, `RESULTS_PER_PAGE = 24`, `INLINE_AD_EVERY = 8`, and types `ListingType`, `AdSlot`, `ListingStatus`.
 - Produces: Tailwind theme tokens `--color-primary`, `--color-accent`, `--color-surface`, `--color-ink`, `--radius-card: 12px` in `app/globals.css` under `@theme`.
 - Produces: npm scripts `dev`, `build`, `start`, `lint`, `test` (vitest run), `test:db` (Task 3 fills), `test:e2e`.
 
 - [ ] **Step 1: Scaffold with create-next-app**
 
-Run from `/home/user`: `npx --yes create-next-app@16 jiran-tmp --ts --tailwind --eslint --app --src-dir=false --import-alias "@/*" --use-npm --yes`, then move its generated files into `/home/user/jiran` (keep the existing `docs/` and `.git`). Pin exact versions in `package.json`.
+Run from `/home/user`: `npx --yes create-next-app@16 as7ab-tmp --ts --tailwind --eslint --app --src-dir=false --import-alias "@/*" --use-npm --yes`, then move its generated files into `/home/user/as7ab` (keep the existing `docs/` and `.git`). Pin exact versions in `package.json`.
 
 - [ ] **Step 2: Add test tooling**
 
@@ -102,7 +102,7 @@ Run from `/home/user`: `npx --yes create-next-app@16 jiran-tmp --ts --tailwind -
 // tests/unit/constants.test.ts
 import { AD_SLOTS, LISTING_STATUSES, SITE_NAME, RESULTS_PER_PAGE, INLINE_AD_EVERY } from '@/lib/constants'
 test('constants match the spec', () => {
-  expect(SITE_NAME).toBe('Jiran')
+  expect(SITE_NAME).toBe('As7ab')
   expect(AD_SLOTS).toEqual(['home_banner','sidebar','search_inline','listing_bottom'])
   expect(LISTING_STATUSES).toEqual(['pending','approved','rejected','hidden'])
   expect(RESULTS_PER_PAGE).toBe(24)
@@ -118,7 +118,7 @@ Expected: FAIL, cannot resolve `@/lib/constants`.
 - [ ] **Step 5: Implement `lib/constants.ts`, `app/globals.css` theme, `app/layout.tsx`**
 
 `globals.css`: `@import "tailwindcss"; @theme { --color-primary: #D96C47; --color-accent: #1F6F78; --color-surface: #FAF7F2; --color-ink: #1E1E1E; --radius-card: 12px; --font-sans: var(--font-jakarta), system-ui, sans-serif; }` and `body { background: var(--color-surface); color: var(--color-ink); }`.
-`layout.tsx`: loads `Plus_Jakarta_Sans` from `next/font/google` with `variable: '--font-jakarta'`, sets `<html lang="en">`, metadata title template `%s · Jiran`.
+`layout.tsx`: loads `Plus_Jakarta_Sans` from `next/font/google` with `variable: '--font-jakarta'`, sets `<html lang="en">`, metadata title template `%s · As7ab`.
 `.env.example`: the four env vars from Global Constraints with placeholder values. `.gitignore` must include `.env*.local`, `node_modules`, `.next`, `test-results`, `playwright-report`.
 
 - [ ] **Step 6: Run tests, lint and build**
@@ -129,7 +129,7 @@ Expected: test PASS, lint clean, build succeeds (font download requires network;
 - [ ] **Step 7: Commit**
 
 ```bash
-git add -A && git commit -m "chore: scaffold Next.js app with Jiran design tokens and test tooling"
+git add -A && git commit -m "chore: scaffold Next.js app with As7ab design tokens and test tooling"
 ```
 
 ---
@@ -237,10 +237,10 @@ git add lib tests/unit && git commit -m "feat: add phone, slug, schema, search-p
 - Modify: `package.json` (`test:db` script)
 
 **Interfaces:**
-- Produces tables and columns exactly as spec §7, with `listings.search_vector` as a generated column: `setweight(to_tsvector('simple', title),'A') || setweight(to_tsvector('simple', description),'B')`.
+- Produces tables and columns exactly as spec §7 (including `site_settings`), with `listings.search_vector` as a generated column: `setweight(to_tsvector('simple', title),'A') || setweight(to_tsvector('simple', description),'B')`.
 - Produces SQL functions: `public.is_admin() returns boolean` (stable, security definer, `select role = 'admin' from profiles where id = auth.uid()`); `public.handle_new_user()` trigger on `auth.users` insert → profile with `display_name = coalesce(raw_user_meta_data->>'full_name', raw_user_meta_data->>'name', split_part(email,'@',1))`; `public.enforce_listing_member_update()` BEFORE UPDATE trigger; `public.enforce_listing_cap()` BEFORE INSERT trigger raising `'LISTING_LIMIT'` when a non-admin owner already has 10; `public.search_listings(q text, p_category int, p_type text, p_area text, p_limit int, p_offset int) returns setof listings` (security invoker, uses `websearch_to_tsquery('simple', q)` when `q <> ''`, falls back to `title ilike '%'||q||'%'` OR match, orders by `ts_rank` desc then `created_at` desc); `public.increment_listing_views(p_listing uuid)`, `public.record_ad_impression(p_ad uuid)`, `public.record_ad_click(p_ad uuid)` (all security definer, void); `public.set_admin_by_email(target_email text, make_admin boolean) returns boolean` (security definer; raises `'NOT_ADMIN'` if caller not admin, `'SELF_DEMOTE'` if demoting self, returns false if email not found); view `public.public_profiles (id, display_name)`.
 - Produces `tests/db/helpers.ts`: `connect(): Promise<Client>`, `as(client, userId: string | null, cb)` which runs `cb` inside a transaction with `set local role authenticated|anon` and `set local request.jwt.claims = '{"sub":"<id>","role":"authenticated"}'`, `createUser(client, { email, meta? }): Promise<string>` inserting into `auth.users`.
-- Produces `scripts/db-test.sh`: creates a throwaway cluster in `/tmp/jiran-pg` as the `postgres` OS user on port 54329, applies `tests/db/shim.sql`, `0001`, `0002`, `seed.sql`, runs `vitest run -c vitest.db.config.ts`, stops the cluster. `0003_storage.sql` is NOT applied locally (no `storage` schema); it is reviewed by reading.
+- Produces `scripts/db-test.sh`: creates a throwaway cluster in `/tmp/as7ab-pg` as the `postgres` OS user on port 54329, applies `tests/db/shim.sql`, `0001`, `0002`, `seed.sql`, runs `vitest run -c vitest.db.config.ts`, stops the cluster. `0003_storage.sql` is NOT applied locally (no `storage` schema); it is reviewed by reading.
 
 - [ ] **Step 1: Write `tests/db/shim.sql`**
 
@@ -271,6 +271,7 @@ test('set_admin_by_email: non-admin → NOT_ADMIN; admin promotes bob; admin can
 test('search_listings handles operators without error', async () => { for (const q of ['cake & "party"', 'a:b', '|', "it's"]) await expect(as(db,null,c=>c.query('select * from search_listings($1,null,null,null,24,0)',[q]))).resolves.toBeTruthy() })
 test('search ranks title match above description match', ...)
 test('deleting listing cascades photos', ...)
+test('site_settings: anon can read; member cannot write; admin can upsert', ...)
 ```
 
 - [ ] **Step 3: Run DB tests to verify they fail**
@@ -282,7 +283,7 @@ Expected: cluster starts; migrations fail to apply or tests FAIL because tables/
 
 `0001`: extensions `pgcrypto`; tables from spec §7 with check constraints (`char_length(title) between 3 and 80`, description 20–2000, `type in ('service','goods')`, status enum check, `slot` check); indexes from §7; `updated_at` trigger; `handle_new_user` trigger; grants: `grant select, insert, update, delete on all tables in schema public to authenticated; grant select on listings, listing_photos, categories, ads, public_profiles to anon; grant insert on ad_requests to anon`.
 `0002`: `alter table ... enable row level security` on all six tables; policies per spec §7 (write them one per operation, named `<table>_<op>_<who>`); the two listing triggers; RPCs; `set_admin_by_email`; `public_profiles` view with `security_invoker = false` (runs as owner; exposes only id + display_name).
-`seed.sql`: the 13 categories from spec §6 with slugs (`parties-events`, `food-catering`, `education-tutoring`, `health-beauty`, `home-repairs`, `kids-baby`, `fashion-accessories`, `handmade-gifts`, `tech-electronics`, `cars-transport`, `professional-services`, `photography-media`, `other`), icon names (lucide names, e.g. `party-popper`, `utensils`, `graduation-cap`, `sparkles`, `wrench`, `baby`, `shirt`, `gift`, `laptop`, `car`, `briefcase`, `camera`, `shapes`), `sort_order` 10..130. Use `on conflict (slug) do nothing`.
+`seed.sql`: default `site_settings` rows (`tagline` = default tagline, `contact_email` = 'hello@example.com', `about_text`, `terms_text` = spec §5 copy, `announcement_text` = '', `announcement_enabled` = 'false') and the 13 categories from spec §6 with slugs (`parties-events`, `food-catering`, `education-tutoring`, `health-beauty`, `home-repairs`, `kids-baby`, `fashion-accessories`, `handmade-gifts`, `tech-electronics`, `cars-transport`, `professional-services`, `photography-media`, `other`), icon names (lucide names, e.g. `party-popper`, `utensils`, `graduation-cap`, `sparkles`, `wrench`, `baby`, `shirt`, `gift`, `laptop`, `car`, `briefcase`, `camera`, `shapes`), `sort_order` 10..130. Use `on conflict (slug) do nothing`.
 
 - [ ] **Step 5: Write `0003_storage.sql`**
 
@@ -341,7 +342,7 @@ Run: `npx vitest run tests/unit/auth-redirect.test.ts` — Expected: FAIL.
 - [ ] **Step 3: Implement the modules listed in Interfaces**
 
 `lib/auth.ts` must import `decideRedirect` from a dependency-free file so the test does not pull in `next/headers`: put `decideRedirect` in `lib/auth-redirect.ts` and re-export it from `lib/auth.ts`.
-Login page: Logo, "Sign in to Jiran", Google button (form posting to `signInWithGoogle`), divider "or", email input + "Send me a sign-in link" button, success state "Check your inbox — the link works for Gmail, Hotmail, and any other email.", error state for `?error=link`: "That link has expired. Send a new one below."
+Login page: Logo, "Sign in to As7ab", Google button (form posting to `signInWithGoogle`), divider "or", email input + "Send me a sign-in link" button, success state "Check your inbox — the link works for Gmail, Hotmail, and any other email.", error state for `?error=link`: "That link has expired. Send a new one below."
 
 - [ ] **Step 4: Run tests, lint, build**
 
@@ -420,7 +421,7 @@ test('hides when one page, shows prev/next otherwise', () => {
 
 - [ ] **Step 3: Implement the components, logo, favicon, layout, not-found**
 
-Logo: SVG wordmark "Jiran" in Plus Jakarta Sans weight 800 with a mark of two overlapping rounded house shapes in primary and accent. `not-found.tsx`: "We couldn't find that page" + `SearchBar`. Images: use `next/image` with `remotePatterns: [{ hostname: '*.supabase.co' }]` in `next.config.ts`; in tests, `next/image` renders a plain `img` under jsdom (set `images.unoptimized` via `vi.mock('next/image')` in `tests/setup.ts` to return a plain `<img>`).
+Logo: SVG wordmark "As7ab" in Plus Jakarta Sans weight 800 with a mark of two overlapping circles (two friends) in primary and accent. `not-found.tsx`: "We couldn't find that page" + `SearchBar`. Images: use `next/image` with `remotePatterns: [{ hostname: '*.supabase.co' }]` in `next.config.ts`; in tests, `next/image` renders a plain `img` under jsdom (set `images.unoptimized` via `vi.mock('next/image')` in `tests/setup.ts` to return a plain `<img>`).
 
 - [ ] **Step 4: Run tests, lint, build** — all green.
 
@@ -565,7 +566,7 @@ test('maps first issue per field', () => {
 - Consumes: `adRequestSchema`, `AD_SLOTS`, `createClient`.
 - Produces `lib/rate-limit.ts`: `class SlidingLimiter { constructor(maxPerWindow: number, windowMs: number); allow(key: string, now?: number): boolean }` in-memory (per serverless instance; documented limitation).
 - Produces `submitAdRequest(prev, formData): Promise<FormState>`: honeypot via schema, limiter `new SlidingLimiter(1, 60_000)` keyed by `x-forwarded-for` first IP (from `headers()`), inserts `ad_requests` with the anon-capable client, returns `{ ok: true }` → page shows "Thanks! We'll be in touch within two working days."
-- Page copy: intro ("Jiran is free for everyone. Advertising is how we keep it that way."), table of the four slots with sizes from spec §8, form (name, business, email, phone, preferred slot select, message, hidden `website_url`).
+- Page copy: intro ("As7ab is free for everyone. Advertising is how we keep it that way."), table of the four slots with sizes from spec §8, form (name, business, email, phone, preferred slot select, message, hidden `website_url`).
 
 - [ ] **Step 1: Write the failing test**
 
@@ -588,14 +589,15 @@ test('one per minute per key', () => {
 ### Task 10: Admin area — queue, listings, ads, categories, admins
 
 **Files:**
-- Create: `app/admin/layout.tsx`, `app/admin/page.tsx`, `app/admin/actions.ts`, `app/admin/listings/page.tsx`, `app/admin/ads/page.tsx`, `app/admin/categories/page.tsx`, `app/admin/admins/page.tsx`, `lib/data/admin.ts`, `components/AdForm.tsx`, `components/AdminNav.tsx`
+- Create: `app/admin/layout.tsx`, `app/admin/page.tsx`, `app/admin/actions.ts`, `app/admin/listings/page.tsx`, `app/admin/ads/page.tsx`, `app/admin/categories/page.tsx`, `app/admin/admins/page.tsx`, `app/admin/settings/page.tsx`, `lib/data/admin.ts`, `lib/data/settings.ts`, `components/AdForm.tsx`, `components/AdminNav.tsx`, `components/Announcement.tsx`
 - Test: `tests/db/rls.test.ts` (extend), `tests/unit/admin-actions-guard.test.ts`
 
 **Interfaces:**
 - Consumes: `requireAdmin` (Task 4), `adInputSchema`, `categoryInputSchema`, data layer.
 - Produces `lib/data/admin.ts`: `getQueue(sb): Promise<{ pending: AdminListingRow[]; flagged: AdminListingRow[] }>`, `getAllListings(sb, { status?, q?, page })`, `getAds(sb)`, `getAdRequests(sb)`, `getAllCategories(sb)`, `getAdmins(sb)`.
 - Produces `app/admin/actions.ts`, each starting with `requireAdmin()`: `approveListing(id)`, `rejectListing(id, reason: string)` (reason 3–300 chars required), `hideListing(id)`, `clearReviewFlag(id)`, `deleteListingAsAdmin(id)`, `saveAd(prev, formData)` (create or update; banner uploaded by the browser to `ad-banners/<uuid>.<ext>` then path posted), `toggleAd(id, isActive)`, `deleteAd(id)`, `setAdRequestStatus(id, status)`, `saveCategory(prev, formData)`, `toggleCategory(id, isActive)`, `promoteAdmin(email)` / `demoteAdmin(email)` via RPC `set_admin_by_email`, mapping `SELF_DEMOTE` → "You can't remove your own admin access." and `false` → "No member with that email."
-- Admin layout: `requireAdmin()` then `AdminNav` (Queue · Listings · Ads · Categories · Admins); queue page shows counts and per-row preview card with Approve / Reject (inline reason field) / Hide.
+- Produces `lib/data/settings.ts`: `getSettings(sb): Promise<SiteSettings>` (typed object with the six keys, defaults applied) and `saveSettings(prev, formData)` action in `app/admin/actions.ts` validating with `settingsSchema` (tagline ≤120, contact_email email, texts ≤5000, announcement_text ≤200). `Announcement` renders under `TopBar` when `announcement_enabled === 'true'`. Home, About, Terms and the report mailto read from `getSettings` instead of hard-coded copy (About/Terms render text with paragraphs split on blank lines).
+- Admin layout: `requireAdmin()` then `AdminNav` (Queue · Listings · Ads · Categories · Admins · Settings); queue page shows counts and per-row preview card with Approve / Reject (inline reason field) / Hide.
 - Ads page: table per slot with impressions/clicks and a `AdForm`; ad requests list below with status select.
 
 - [ ] **Step 1: Write the failing tests**

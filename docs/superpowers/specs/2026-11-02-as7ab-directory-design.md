@@ -1,4 +1,4 @@
-# Jiran — community services & goods directory (design spec)
+# As7ab — community services & goods directory (design spec)
 
 Date: 2026-11-02
 Status: draft for owner review
@@ -6,7 +6,8 @@ Owner: Cynthia Merhej
 
 ## 1. Purpose
 
-Jiran ("neighbours" in Arabic) is a free, English-language online directory
+As7ab ("friends" in Arabic, written the Lebanese texting way) is a free,
+English-language online directory
 for Lebanon. Anyone who offers a service or sells goods (a parent selling
 birthday supplies, a tutor, a plumber, a home baker) signs up, posts a
 listing with photos and contact details, and visitors find them by
@@ -37,7 +38,8 @@ Stated by the owner:
 - Moderated by the owner plus other admins they appoint.
 - Members provide: business details, photos, Instagram page, phone, email.
 - Visitors search by category, type, or name. Feel like Dubizzle / OLX.
-- Name: **Jiran** (domain availability unverified at time of writing).
+- Name: **As7ab** (owner's choice, replacing the earlier working name As7ab;
+  domain availability unverified at time of writing).
 - Hosting: free tiers set up with step-by-step instructions.
 
 Assumptions made (owner may correct):
@@ -120,6 +122,10 @@ Admin:
 - `/admin/categories` Add / rename / reorder / hide categories.
 - `/admin/admins` List admins; promote a member by email; demote (cannot
   demote yourself).
+- `/admin/settings` Back-office text settings editable without code: site
+  tagline, contact email shown on the site, About page text, Terms page
+  text, optional announcement banner (text + on/off) shown under the top
+  bar. Stored in `site_settings`.
 
 Route protection: middleware redirects unauthenticated users away from
 `/dashboard*` and `/admin*`; `/admin*` additionally requires `role = 'admin'`
@@ -189,6 +195,10 @@ ad_requests       id uuid PK, name, business, email, phone, slot,
                   message, status text default 'new'
                     -- 'new' | 'contacted' | 'closed'
                   created_at
+
+site_settings     key text PK, value text not null, updated_at timestamptz
+                  -- keys: tagline, contact_email, about_text, terms_text,
+                  --       announcement_text, announcement_enabled
 ```
 
 Indexes: `listings(status, created_at desc)`, `listings(category_id)`,
@@ -218,6 +228,7 @@ part).
   Impressions/clicks are incremented through a security-definer RPC, not
   by direct update.
 - `ad_requests`: anyone may insert; only admins may read/update.
+- `site_settings`: public read; admin write.
 - `views` on listings incremented through a security-definer RPC.
 
 `is_admin()` is a SQL function reading `profiles.role` for `auth.uid()`,
@@ -269,7 +280,8 @@ set, otherwise newest first. No external search service in v1.
   `#FAF7F2`, text `#1E1E1E`. Font: Plus Jakarta Sans (Google Fonts) with
   system fallback. Rounded corners (12 px), soft shadows, generous
   whitespace.
-- Logo: wordmark "Jiran" with a simple two-house / two-door mark; SVG.
+- Logo: wordmark "As7ab" with a simple mark of two overlapping rounded
+  circles (two friends) in primary and accent; SVG.
 - Accessibility: WCAG AA contrast, keyboard-reachable controls, alt text on
   photos (listing title), form errors announced.
 - Deliverables: the live site plus a short visual style sheet
@@ -352,7 +364,7 @@ mobile app, automated spam detection.
 ## 16. Project structure (for the implementation plan)
 
 ```
-jiran/
+as7ab/
   app/                # Next.js routes as in §5
   components/         # UI: ListingCard, AdSlot, SearchBar, PhotoUploader...
   lib/                # supabase clients, schemas (zod), phone, slug, search
