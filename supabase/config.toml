@@ -1,0 +1,6 @@
+# Minimal Supabase CLI config so `npx supabase db push` can apply the
+# migrations in supabase/migrations to a linked project.
+project_id = "as7ab"
+
+[db]
+major_version = 17
