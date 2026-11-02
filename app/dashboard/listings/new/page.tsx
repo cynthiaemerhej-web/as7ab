@@ -16,7 +16,7 @@ export default async function NewListingPage() {
   const [categories, profile, { count }] = await Promise.all([
     getActiveCategories(sb),
     getProfile(sb, me.id),
-    sb.from('listings').select('id', { count: 'exact', head: true }).eq('owner_id', me.id),
+    sb.from('listings').select('id', { count: 'exact', head: true }).eq('owner_id', me.id).neq('status', 'hidden'),
   ])
 
   if ((count ?? 0) >= MAX_LISTINGS_PER_MEMBER) {

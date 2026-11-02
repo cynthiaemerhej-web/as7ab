@@ -27,7 +27,7 @@ function revalidateAll() {
 export async function approveListing(formData: FormData): Promise<void> {
   await requireAdmin()
   const sb = await createClient()
-  await sb.from('listings').update({ status: 'approved', needs_review: false, rejection_reason: null }).eq('id', String(formData.get('id')))
+  await sb.from('listings').update({ status: 'approved', needs_review: false, rejection_reason: null, hidden_by_admin: false }).eq('id', String(formData.get('id')))
   revalidateAll()
 }
 
@@ -45,7 +45,8 @@ export async function rejectListing(_prev: FormState, formData: FormData): Promi
 export async function hideListing(formData: FormData): Promise<void> {
   await requireAdmin()
   const sb = await createClient()
-  await sb.from('listings').update({ status: 'hidden', needs_review: false }).eq('id', String(formData.get('id')))
+  // hidden_by_admin makes the hide sticky: the member cannot unhide it themselves.
+  await sb.from('listings').update({ status: 'hidden', hidden_by_admin: true, needs_review: false }).eq('id', String(formData.get('id')))
   revalidateAll()
 }
 
@@ -60,8 +61,12 @@ export async function deleteListingAsAdmin(formData: FormData): Promise<void> {
   await requireAdmin()
   const sb = await createClient()
   const id = String(formData.get('id'))
+  const { data: listing } = await sb.from('listings').select('owner_id').eq('id', id).maybeSingle()
   const { data: photos } = await sb.from('listing_photos').select('storage_path').eq('listing_id', id)
-  if (photos && photos.length > 0) await sb.storage.from(LISTING_PHOTOS_BUCKET).remove(photos.map((p) => p.storage_path))
+  // Only remove files that belong to this listing's own folder (defence in depth next to the DB check).
+  const prefix = listing ? `${listing.owner_id}/${id}/` : null
+  const paths = (photos ?? []).map((p) => p.storage_path).filter((p) => prefix && p.startsWith(prefix))
+  if (paths.length > 0) await sb.storage.from(LISTING_PHOTOS_BUCKET).remove(paths)
   await sb.from('listings').delete().eq('id', id)
   revalidateAll()
 }

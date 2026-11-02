@@ -58,6 +58,7 @@ export type MyListing = {
   slug: string
   title: string
   status: ListingWithRefs['status']
+  hidden_by_admin: boolean
   needs_review: boolean
   rejection_reason: string | null
   updated_at: string
@@ -68,7 +69,7 @@ export type MyListing = {
 export async function getMyListings(sb: Sb, ownerId: string): Promise<MyListing[]> {
   const { data, error } = await sb
     .from('listings')
-    .select('id, slug, title, status, needs_review, rejection_reason, updated_at, views, listing_photos(storage_path, sort_order)')
+    .select('id, slug, title, status, hidden_by_admin, needs_review, rejection_reason, updated_at, views, listing_photos(storage_path, sort_order)')
     .eq('owner_id', ownerId)
     .order('updated_at', { ascending: false })
   if (error) throw error
@@ -80,6 +81,7 @@ export async function getMyListings(sb: Sb, ownerId: string): Promise<MyListing[
       slug: r.slug,
       title: r.title,
       status: r.status,
+      hidden_by_admin: r.hidden_by_admin,
       needs_review: r.needs_review,
       rejection_reason: r.rejection_reason,
       updated_at: r.updated_at,

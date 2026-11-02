@@ -30,7 +30,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
-      - run: npx tsc --noEmit
+      - run: npx next typegen && npx tsc --noEmit
       - run: npx vitest run
       - name: Database rules
         run: bash scripts/db-test.sh --external postgresql://postgres:postgres@localhost:5432/as7ab_test

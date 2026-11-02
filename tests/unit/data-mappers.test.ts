@@ -14,6 +14,7 @@ const row = {
   instagram: 'mia',
   website: null,
   status: 'approved' as const,
+  hidden_by_admin: false,
   needs_review: false,
   rejection_reason: null,
   views: 3,

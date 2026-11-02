@@ -42,6 +42,7 @@ export type ListingRow = {
   instagram: string | null
   website: string | null
   status: ListingStatusDb
+  hidden_by_admin: boolean
   needs_review: boolean
   rejection_reason: string | null
   views: number
@@ -120,6 +121,7 @@ export type Database = {
           | 'instagram'
           | 'website'
           | 'status'
+          | 'hidden_by_admin'
           | 'needs_review'
           | 'rejection_reason'
           | 'views'

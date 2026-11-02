@@ -19,7 +19,8 @@ export default async function DashboardPage() {
   const profile = await requireMember('/dashboard')
   const sb = await createClient()
   const listings = await getMyListings(sb, profile.id)
-  const atCap = listings.length >= MAX_LISTINGS_PER_MEMBER
+  const visibleCount = listings.filter((l) => l.status !== 'hidden').length
+  const atCap = visibleCount >= MAX_LISTINGS_PER_MEMBER
 
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-8">
@@ -27,7 +28,7 @@ export default async function DashboardPage() {
         <div>
           <h1 className="text-2xl font-bold">My listings</h1>
           <p className="text-sm text-muted">
-            Hi {profile.display_name}. {listings.length} of {MAX_LISTINGS_PER_MEMBER} listings used.
+            Hi {profile.display_name}. {visibleCount} of {MAX_LISTINGS_PER_MEMBER} listings used (hidden ones don&apos;t count).
           </p>
         </div>
         {atCap ? (
@@ -66,6 +67,9 @@ export default async function DashboardPage() {
                 {l.status === 'rejected' && l.rejection_reason && (
                   <p className="mt-1 text-sm text-rose-800">Reason: {l.rejection_reason}</p>
                 )}
+                {l.status === 'hidden' && l.hidden_by_admin && (
+                  <p className="mt-1 text-sm text-muted">Hidden by an admin. Edit it to address the problem, then contact us to have it reviewed.</p>
+                )}
                 <p className="mt-1 inline-flex items-center gap-1 text-xs text-muted">
                   <Eye className="h-3.5 w-3.5" aria-hidden="true" /> {l.views} views · updated {new Date(l.updated_at).toLocaleDateString('en-GB')}
                 </p>
@@ -82,7 +86,7 @@ export default async function DashboardPage() {
                     <button type="submit" className={smallBtn}>Hide</button>
                   </form>
                 )}
-                {l.status === 'hidden' && (
+                {l.status === 'hidden' && !l.hidden_by_admin && (
                   <form action={changeListingStatus}>
                     <input type="hidden" name="id" value={l.id} />
                     <input type="hidden" name="status" value="approved" />

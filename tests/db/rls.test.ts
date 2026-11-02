@@ -119,6 +119,37 @@ describe('listings', () => {
     await expect(insertListing(db, bob, catId)).rejects.toThrow(/LISTING_LIMIT/)
   })
 
+  test('hidden listings do not count toward the cap (spec §11: hide or delete)', async () => {
+    const one = (await db.query('select id from listings where owner_id = $1 limit 1', [bob])).rows[0].id
+    await as(db, admin, (c) => c.query(`update listings set status = 'hidden' where id = $1`, [one]))
+    await expect(insertListing(db, bob, catId)).resolves.toBeTruthy()
+    await expect(insertListing(db, bob, catId)).rejects.toThrow(/LISTING_LIMIT/)
+  })
+
+  test('admin hide is sticky: member cannot unhide until an admin approves again', async () => {
+    const id = await insertListing(db, alice, catId)
+    await as(db, admin, (c) => c.query(`update listings set status = 'approved' where id = $1`, [id]))
+    await as(db, admin, (c) => c.query(`update listings set status = 'hidden', hidden_by_admin = true where id = $1`, [id]))
+    await as(db, alice, (c) => c.query(`update listings set status = 'approved', hidden_by_admin = false where id = $1`, [id]))
+    expect((await db.query('select status, hidden_by_admin from listings where id = $1', [id])).rows[0]).toEqual({ status: 'hidden', hidden_by_admin: true })
+    await as(db, admin, (c) => c.query(`update listings set status = 'approved', hidden_by_admin = false where id = $1`, [id]))
+    expect((await db.query('select status from listings where id = $1', [id])).rows[0].status).toBe('approved')
+    // a member's own hide is still reversible
+    await as(db, alice, (c) => c.query(`update listings set status = 'hidden' where id = $1`, [id]))
+    await as(db, alice, (c) => c.query(`update listings set status = 'approved' where id = $1`, [id]))
+    expect((await db.query('select status from listings where id = $1', [id])).rows[0].status).toBe('approved')
+  })
+
+  test('member cannot bypass the guard by setting the old GUC', async () => {
+    const id = await insertListing(db, alice, catId)
+    await as(db, admin, (c) => c.query(`update listings set status = 'approved' where id = $1`, [id]))
+    await as(db, alice, async (c) => {
+      await c.query(`select set_config('as7ab.bypass_guard', 'on', true)`)
+      await c.query(`update listings set views = 999, needs_review = false, status = 'approved' where id = $1`, [id])
+    })
+    expect((await db.query('select views from listings where id = $1', [id])).rows[0].views).toBe(0)
+  })
+
   test('increment_listing_views works for anon on approved only', async () => {
     await as(db, null, (c) => c.query('select increment_listing_views($1)', [pendingId]))
     expect((await db.query('select views from listings where id = $1', [pendingId])).rows[0].views).toBe(1)
@@ -140,11 +171,32 @@ describe('listing_photos', () => {
       as(db, alice, (c) => c.query('insert into listing_photos (listing_id, storage_path, sort_order) values ($1, $2, 6)', [id, `${alice}/${id}/6.jpg`])),
     ).rejects.toThrow(/PHOTO_LIMIT/)
     await expect(
-      as(db, bob, (c) => c.query('insert into listing_photos (listing_id, storage_path, sort_order) values ($1, $2, 0)', [id, `${bob}/${id}/x.jpg`])),
+      as(db, bob, (c) => c.query('insert into listing_photos (listing_id, storage_path, sort_order) values ($1, $2, 0)', [id, `${alice}/${id}/x.jpg`])),
     ).rejects.toThrow(/row-level security/)
     expect((await as(db, null, (c) => c.query('select id from listing_photos where listing_id = $1', [id]))).rowCount).toBe(0)
     await as(db, admin, (c) => c.query(`update listings set status = 'approved' where id = $1`, [id]))
     expect((await as(db, null, (c) => c.query('select id from listing_photos where listing_id = $1', [id]))).rowCount).toBe(6)
+  })
+
+  test('photo path must live under the owner/listing folder', async () => {
+    const id = await insertListing(db, alice, catId)
+    await expect(
+      as(db, alice, (c) => c.query('insert into listing_photos (listing_id, storage_path, sort_order) values ($1, $2, 0)', [id, `${bob}/${id}/x.jpg`])),
+    ).rejects.toThrow(/PHOTO_PATH/)
+    await expect(
+      as(db, alice, (c) => c.query('insert into listing_photos (listing_id, storage_path, sort_order) values ($1, $2, 0)', [id, `${alice}/other-listing/x.jpg`])),
+    ).rejects.toThrow(/PHOTO_PATH/)
+    await as(db, alice, (c) => c.query('insert into listing_photos (listing_id, storage_path, sort_order) values ($1, $2, 0)', [id, `${alice}/${id}/ok.jpg`]))
+  })
+
+  test('adding or removing photos on a live listing flags it for review', async () => {
+    const id = await insertListing(db, alice, catId)
+    await as(db, admin, (c) => c.query(`update listings set status = 'approved' where id = $1`, [id]))
+    await as(db, alice, (c) => c.query('insert into listing_photos (listing_id, storage_path, sort_order) values ($1, $2, 0)', [id, `${alice}/${id}/a.jpg`]))
+    expect((await db.query('select needs_review from listings where id = $1', [id])).rows[0].needs_review).toBe(true)
+    await as(db, admin, (c) => c.query(`update listings set needs_review = false where id = $1`, [id]))
+    await as(db, alice, (c) => c.query('delete from listing_photos where listing_id = $1', [id]))
+    expect((await db.query('select needs_review from listings where id = $1', [id])).rows[0].needs_review).toBe(true)
   })
 
   test('deleting a listing cascades its photos', async () => {

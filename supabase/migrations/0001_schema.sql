@@ -68,6 +68,7 @@ create table public.listings (
   instagram text,
   website text,
   status text not null default 'pending' check (status in ('pending', 'approved', 'rejected', 'hidden')),
+  hidden_by_admin boolean not null default false,  -- set when an admin hides; members cannot unhide
   needs_review boolean not null default false,
   rejection_reason text,
   views int not null default 0,

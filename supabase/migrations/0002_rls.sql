@@ -89,8 +89,10 @@ begin
     new.needs_review := false;
     new.rejection_reason := null;
     new.views := 0;
-    if (select count(*) from public.listings where owner_id = new.owner_id) >= 10 then
-      raise exception 'LISTING_LIMIT' using hint = 'A member may have at most 10 listings';
+    new.hidden_by_admin := false;
+    -- Hidden listings don't count: members free a slot by hiding or deleting (spec §11).
+    if (select count(*) from public.listings where owner_id = new.owner_id and status <> 'hidden') >= 10 then
+      raise exception 'LISTING_LIMIT' using hint = 'A member may have at most 10 visible listings';
     end if;
   end if;
   return new;
@@ -107,8 +109,9 @@ returns trigger language plpgsql as $$
 declare
   content_changed boolean;
 begin
-  -- Admins, and our own security-definer RPCs (which set this flag), skip the guard.
-  if public.is_admin() or current_setting('as7ab.bypass_guard', true) = 'on' then
+  -- Admins skip the guard. So do our own security-definer RPCs, which run as the
+  -- function owner rather than the API roles (no client-settable flag involved).
+  if public.is_admin() or current_user not in ('authenticated', 'anon') then
     return new;
   end if;
 
@@ -117,12 +120,14 @@ begin
   new.views := old.views;
   new.needs_review := old.needs_review;
   new.rejection_reason := old.rejection_reason;
+  new.hidden_by_admin := old.hidden_by_admin;
   new.created_at := old.created_at;
 
   if new.status is distinct from old.status then
-    if (old.status = 'approved' and new.status = 'hidden')
-       or (old.status = 'hidden' and new.status = 'approved') then
-      null; -- allowed
+    if old.status = 'approved' and new.status = 'hidden' then
+      null; -- member hides their own listing
+    elsif old.status = 'hidden' and new.status = 'approved' and not old.hidden_by_admin then
+      null; -- member unhides a listing they hid themselves
     elsif old.status = 'rejected' and new.status = 'pending' then
       new.rejection_reason := null;
     else
@@ -183,6 +188,49 @@ $$;
 create trigger listing_photos_enforce_limit before insert on public.listing_photos
   for each row execute function public.enforce_photo_limit();
 
+-- A photo row may only point at a file inside its own listing's folder
+-- ({owner_id}/{listing_id}/...), so nobody can attach (and later delete) someone else's file.
+create or replace function public.enforce_photo_path()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  owner uuid;
+begin
+  select owner_id into owner from public.listings where id = new.listing_id;
+  if owner is null or position(owner::text || '/' || new.listing_id::text || '/' in new.storage_path) <> 1 then
+    raise exception 'PHOTO_PATH' using hint = 'storage_path must be under {owner_id}/{listing_id}/';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger listing_photos_enforce_path before insert or update on public.listing_photos
+  for each row execute function public.enforce_photo_path();
+
+-- Changing photos on a live (or hidden) listing is an edit: flag it for an admin re-check.
+-- Security definer so the listings guard (which ignores non-API roles) lets the flag through.
+create or replace function public.flag_listing_on_photo_change()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  lid uuid := coalesce(new.listing_id, old.listing_id);
+begin
+  if not public.is_admin() then
+    update public.listings set needs_review = true where id = lid and status in ('approved', 'hidden');
+  end if;
+  return coalesce(new, old);
+end;
+$$;
+
+create trigger listing_photos_flag_review after insert or delete on public.listing_photos
+  for each row execute function public.flag_listing_on_photo_change();
+
 -- -------------------------------------------------------------------- ads
 alter table public.ads enable row level security;
 
@@ -219,15 +267,11 @@ create policy site_settings_admin_write on public.site_settings
 -- ------------------------------------------------------------------- RPCs
 create or replace function public.increment_listing_views(p_listing uuid)
 returns void
-language plpgsql
+language sql
 security definer
 set search_path = public
 as $$
-begin
-  perform set_config('as7ab.bypass_guard', 'on', true);
   update public.listings set views = views + 1 where id = p_listing and status = 'approved';
-  perform set_config('as7ab.bypass_guard', 'off', true);
-end;
 $$;
 
 create or replace function public.record_ad_impression(p_ad uuid)

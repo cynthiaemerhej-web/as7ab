@@ -27,7 +27,7 @@ npm run dev
 ```bash
 npm test            # unit + component tests (Vitest)
 npm run test:db     # database rules on a throwaway local Postgres 16
-npm run lint && npm run typecheck && npm run build
+npm run lint && npm run typecheck && npm run build   # typecheck runs `next typegen` first
 npm run test:e2e    # browser tests; skipped unless E2E_SUPABASE_URL is set (see docs/SETUP.md)
 ```
 

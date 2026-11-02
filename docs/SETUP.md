@@ -62,10 +62,25 @@ git push -u origin main
 
 ### 2.4 Email sign-in link (works for Hotmail, Gmail, anything)
 
-Nothing to switch on: **Email** provider is enabled by default. On the free
-plan Supabase sends a limited number of emails per hour (a few per hour at
-the time of writing; check **Authentication → Rate Limits**). That is fine
-to start. If the site grows, connect a free email service under
+The **Email** provider is on by default, but one template needs a small
+change so links work when people request them on one device and open them
+on another (for example request on a laptop, open in the Gmail app on a
+phone, which is very common):
+
+1. Supabase → **Authentication → Email Templates → Magic Link**.
+2. Replace the whole body with:
+
+```html
+<h2>Sign in to As7ab</h2>
+<p><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email&next=%2Fdashboard">Click here to sign in</a>.</p>
+<p>The link works once and expires in an hour. If you didn't ask for it, ignore this email.</p>
+```
+
+3. **Save**.
+
+On the free plan Supabase sends a limited number of emails per hour (a few
+per hour at the time of writing; check **Authentication → Rate Limits**).
+That is fine to start. If the site grows, connect a free email service under
 **Project Settings → Authentication → SMTP Settings**.
 
 ### 2.5 Google sign-in (optional but recommended)
@@ -153,7 +168,8 @@ Vercel to the new address, and redeploy.
 ## 7. Weekly routine (5 minutes)
 
 - Open **Back office → Queue**: approve or reject new listings. Reasons you
-  type are shown to the member.
+  type are shown to the member. **Hide** takes a listing offline in a way
+  the member cannot undo; **Reject** sends it back to them with your reason.
 - **Ads**: answer new requests; switch ads on/off; check views and clicks.
 - Keep the site alive: the Supabase free plan **pauses a project after about
   a week without activity**. Normal visitors prevent this. If it ever shows
@@ -174,11 +190,11 @@ Vercel to the new address, and redeploy.
 | Problem | Fix |
 |---------|-----|
 | Sign-in email never arrives | Check spam. Free-plan email limits are low; wait an hour or set up SMTP (2.4). |
+| "That link didn't work" after clicking the email | Either the Magic Link template was not changed (2.4), or the link was opened more than an hour later. Fix the template, then request a new link. |
 | Google shows `redirect_uri_mismatch` | The URI in Google Cloud must be exactly the Supabase callback from 2.5, with no trailing slash. |
-| "That link has expired" | Links are single-use and expire after an hour. Request a new one. |
 | Photos don't upload | Buckets missing or policies not applied: re-run `0003_storage.sql`. |
 | Home page says it can't connect | One of the four environment variables in Vercel is wrong. Fix and **Redeploy**. |
-| `/admin` shows "page not found" for you | You are not admin yet: repeat step 4 with the exact email you signed in with. |
+| `/admin` sends you back to the home page | You are not admin yet: repeat step 4 with the exact email you signed in with. |
 
 ## 10. For whoever maintains the code
 

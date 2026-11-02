@@ -18,7 +18,7 @@ export default async function LoginPage(props: PageProps<'/login'>) {
         <p className="mt-1 text-sm text-muted">Free to join. Post what you offer, or save your favourites.</p>
         {error === 'link' && (
           <p role="alert" className="mt-4 rounded-card border border-primary/30 bg-primary/5 p-3 text-sm text-primary-dark">
-            That link has expired. Send a new one below.
+            That link didn&apos;t work. Links expire after an hour and must be opened on the same device and browser you requested them from. Send a new one below.
           </p>
         )}
         {error === 'google' && (

@@ -39,16 +39,16 @@ export default function ModerationCard({ row }: { row: AdminListingRow }) {
 
       <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-3">
         <Link href={`/l/${row.slug}`} target="_blank" className={`${btn} border border-line bg-white hover:bg-surface`}>Preview</Link>
-        <form action={approveListing}>
-          <input type="hidden" name="id" value={row.id} />
-          <button type="submit" className={`${btn} bg-emerald-600 text-white hover:bg-emerald-700`}>
-            {row.needs_review && row.status === 'approved' ? 'Looks fine' : 'Approve'}
-          </button>
-        </form>
-        {row.needs_review && row.status !== 'approved' && (
+        {row.needs_review && row.status !== 'pending' ? (
+          // An edit on a live or member-hidden listing: clearing the flag keeps the member's own visibility choice.
           <form action={clearReviewFlag}>
             <input type="hidden" name="id" value={row.id} />
-            <button type="submit" className={`${btn} border border-line bg-white hover:bg-surface`}>Clear flag</button>
+            <button type="submit" className={`${btn} bg-emerald-600 text-white hover:bg-emerald-700`}>Looks fine</button>
+          </form>
+        ) : (
+          <form action={approveListing}>
+            <input type="hidden" name="id" value={row.id} />
+            <button type="submit" className={`${btn} bg-emerald-600 text-white hover:bg-emerald-700`}>Approve</button>
           </form>
         )}
         <button type="button" onClick={() => setRejecting((v) => !v)} className={`${btn} border border-rose-200 bg-white text-rose-700 hover:bg-rose-50`}>
